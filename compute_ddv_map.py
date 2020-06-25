@@ -4,6 +4,7 @@ import tqdm
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
+from matplotlib.ticker import ScalarFormatter
 from mpl_toolkits.axes_grid1.axes_divider import make_axes_locatable
 from astropy.wcs import wcs
 import warnings
@@ -25,18 +26,29 @@ def plot_map(ax, w, rx, ry, v, cmap, label, normtype="linear"):
         else:
             norm = mpl.colors.Normalize(vmin=vmin, vmax=vmax)
             
-            
+        vlevels = [1e-7, 3e-7, 1e-6, 3e-6, 1e-5, 3e-5, 1e-4, 3e-4, 1e-3, 3e-3, 1e-2, 3e-2, 0.1, 0.3, 1, 3, 10, 30, 100, 300, 1000]
+        c = (vlevels > vmin) & (vlevels < vmax)
+        
         img = ax.imshow(v, origin="lower", interpolation=None, aspect=1,
                         cmap=cmap, vmin=vmin, vmax=vmax,
                         norm=norm)
         ax_divider = make_axes_locatable(ax)
         cax = ax_divider.append_axes("bottom", size="5%", pad="8%")
-        cbar = fig.colorbar(img, cax=cax, orientation="horizontal", label=label)
+        cbar = fig.colorbar(img, cax=cax, orientation="horizontal", label=label, ticks=vlevels)
+        labels = []
+        for vlevel in vlevels:
+            if vlevel >= 1e-4:
+                labels.append(f"${vlevel:g}$")
+            else:
+                vexp = int(np.floor(np.log10(vlevel)))
+                vman = vlevel / 10**vexp
+                labels.append(f"${vman:g}\\times 10^{{{vexp}}}$")
+                
+        cbar.ax.set_xticklabels(labels)
         
     ax.axis("off")
     plot_grid(w, ax)
 
-    vlevels = [0.1, 0.2, 0.5, 1, 2, 5, 10, 20, 50, 100, 200, 500, 1000]
     
     if np.sum(c) > 0:
         cs = ax.contour(rx, ry, v, colors=["floralwhite"], levels=vlevels, norm=norm, origin="lower")
@@ -90,30 +102,76 @@ if __name__ == "__main__":
     # Settings
     lat = -30.244639 # Observer latitude [deg]
     elev = 2663 # Observer elevation [m]
+    sundec = -0.0
+    sunha = 125.3
+    afov = 100 # Field-of-view [deg^2]
+    texp = 60 # Exposure time [sec]
+    fname = "yaml/starlink_gen2_oneweb_phase2.yaml"
+
+    lat = -24.627222 # Observer latitude [deg]
+    elev = 2635 # Observer elevation [m]
+    sundec = -0.0
+    sunha = 90
+    afov = (6 / 60)**2 # Field-of-view [deg^2]
+    texp = 300 # Exposure time [sec]
+    instrument = "VLT/FORS2 Imaging"
+    fname = "yaml/starlink_gen2_oneweb_phase2.yaml"
+
+    lat = -24.627222 # Observer latitude [deg]
+    elev = 2635 # Observer elevation [m]
+    sundec = -0.0
+    sunha = 90
+    afov = (6 / 60) * (2 / 3600) # Field-of-view [deg^2]
+    texp = 1800 # Exposure time [sec]
+    instrument = "VLT/FORS2 spectroscopy"
+    fname = "yaml/starlink_gen2_oneweb_phase2.yaml"
+
+    lat = -24.627222 # Observer latitude [deg]
+    elev = 2635 # Observer elevation [m]
+    sundec = -0.0
+    sunha = 90
+    afov = (10 / 3600) * (2 / 3600) # Field-of-view [deg^2]
+    texp = 1800 # Exposure time [sec]
+    instrument = "VLT/UVES spectroscopy"
+    fname = "yaml/starlink_gen2_oneweb_phase2.yaml"
+
+    lat = -24.627222 # Observer latitude [deg]
+    elev = 2635 # Observer elevation [m]
+    sundec = -0.0
+    sunha = 90
+    afov = 1 # Field-of-view [deg^2]
+    texp = 300 # Exposure time [sec]
+    instrument = "VST/OmegaCAM imaging"
+    fname = "yaml/starlink_gen2_oneweb_phase2.yaml"
+
+    # Settings
+    lat = -30.244639 # Observer latitude [deg]
+    elev = 2663 # Observer elevation [m]
+    sundec = -0.0
+    sunha = 110.0
+    afov = 3 * 3 # Field-of-view [deg^2]
+    texp = 300 # Exposure time [sec]
+    instrument = "Rubin Observatory/LSST"
+    fname = "yaml/starlink_gen2_oneweb_phase2.yaml"
+
     
     # Intialize map
     nx, ny = 181, 181
     w, rx, ry, az, el = initialize_azel_map(nx, ny)
 
     # Read YAML file
-    with open("starlink_gen2_oneweb_phase2.yaml", "r") as fp:
+    with open(fname, "r") as fp:
         orbital_shells = yaml.full_load(fp)
 
     # Number of orbital shells
     nshell = len(orbital_shells)
 
-    # Solar settings
-    sundec = -0.0
-    sunha = 125.3
-
-    # Exposure settings
-    afov = 100 # Field-of-view [deg^2]
-    texp = 60 # Exposure time [sec]
-    rfov = np.sqrt(afov / np.pi)
-
     # Solar azimuth, elevation
     sunaz, sunel = solar_azel(sunha, sundec, lat)
 
+    # FOV radius
+    rfov = np.sqrt(afov / np.pi)
+    
     # Loop over shells
     for i, o in enumerate(orbital_shells):
         print(o["name"])
@@ -150,14 +208,15 @@ if __name__ == "__main__":
 
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 8))
 
-    plot_map(ax1, w, rx, ry, count1 , cmap, f"Satellite density [deg$^{{-2}}$]", normtype="log")
-    plot_map(ax2, w, rx, ry, count2 , cmap, f"Trail density [deg$^{{-2}}$]", normtype="log")
+    plot_map(ax1, w, rx, ry, count1 , cmap, f"Instantaneous number of satellites", normtype="log")
+    plot_map(ax2, w, rx, ry, count2 , cmap, f"Trailed number of satellites", normtype="log")
     ax1.text(0, 20, f"$\phi={lat:.2f}^\circ$")
     ax1.text(0, 10, f"$H_\odot={sunha:.2f}^\circ$")
     ax1.text(0, 0, f"$\delta_\odot={sundec:.2f}^\circ$")
 
-    ax1.text(0, 190, "Starlink Generation 2 + OneWeb Phase 2")
-    ax1.text(0, 170, f"FOV = {afov} deg$^2$")
+    ax1.text(0, 200, "Starlink Generation 2 + OneWeb Phase 2")
+    ax1.text(0, 180, instrument)
+    ax1.text(0, 170, f"FOV = {afov:g} deg$^2$")
     ax1.text(0, 160, f"$t_\mathrm{{exp}} = {texp}$ s")
     plt.tight_layout()
     plt.savefig("plot.png")
