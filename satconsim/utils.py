@@ -88,27 +88,33 @@ def compute_probability(b, incl):
 
     return 1 / (np.pi * np.sqrt((sb + si) * (si - sb))) * np.cos(b * d2r) * d2r
 
-def solar_illumination(psat, sunha, sundec):
+def solar_illumination(psat, sunha, sundec, sunr):
     # Compute solar position
     sh, ch = np.sin(sunha * d2r), np.cos(sunha * d2r)
     sd, cd = np.sin(sundec * d2r), np.cos(sundec * d2r)
-    psun = rau * np.array([cd * ch, cd * sh, sd])
+    psun = sunr * rau * np.array([cd * ch, cd * sh, sd])
 
     # Position offset with satellite
-    dp = psun[:, np.newaxis, np.newaxis] - psat
+    if len(psun.shape) == 1:
+        dp = psun[:, np.newaxis, np.newaxis] - psat
+    elif len(psun.shape) == 2:
+        dp = psun[:, :, np.newaxis, np.newaxis] - psat[:, np.newaxis]
 
     # Distances
     r = np.sqrt(np.sum(dp ** 2, axis=0))
     rsat = np.sqrt(np.sum(psat ** 2, axis=0))
-    
+
     # Angles
     asun = np.arcsin(rsun / r) * r2d
     aearth = np.arcsin(rearth / rsat) * r2d
-    a = np.arccos(np.sum(-dp * psat, axis=0) / (r * rsat)) * r2d
+    if len(psun.shape) == 1:
+        a = np.arccos(np.sum(-dp * psat, axis=0) / (r * rsat)) * r2d
+    elif len(psun.shape) == 2:
+        a = np.arccos(np.sum(-dp * psat[:, np.newaxis, :, :], axis=0) / (r * rsat)) * r2d
     
     # Boolean with illuminated fraction
     illuminated = np.where(a - aearth > asun, 1, np.nan)
-
+    
     return illuminated
 
 def solar_azel(sunha, sundec, lat):
@@ -138,7 +144,7 @@ def solar_radec(mjd):
     ra = np.arctan2(np.cos(ecl * d2r) * np.sin(s * d2r), np.cos(s * d2r))
     dec = np.arcsin(np.sin(ecl * d2r) * np.sin(s * d2r))
 
-    return r, ra, dec
+    return r, ra * r2d, dec * r2d
 
 def gmst(mjd):
     t = (mjd - 51544.5) / 36525.0
