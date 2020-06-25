@@ -1,0 +1,6 @@
+- name: "Starlink Gen0 Shell 1"
+  id: "starlink_gen0_shell_1"
+  altitude_km: 550
+  inclination_deg: 53.0
+  number_of_planes: 72
+  satellites_per_plane: 22
