@@ -38,7 +38,7 @@ def compute_ddv_map(az, el, lat, elev, incl, rsat, nsat):
     sh, ch = np.sin(ha), np.cos(ha)
     sd, cd = np.sin(dec), np.cos(dec)
     usat = np.array([cd * ch, cd * sh, sd])
-    
+
     # Compute observer position and velocity
     pobs, vobs = observer_posvel(lat, elev)
 
@@ -69,13 +69,5 @@ def compute_ddv_map(az, el, lat, elev, incl, rsat, nsat):
 
     # Average velocity
     v = 0.5 * (vn + vs)
-
-    # Mask bad areas
-    c = (el >= 0.0) & (np.abs(psat[2]) <= (rsat + rearth) * np.sin(incl * d2r))
-    d[~c] = np.nan
-    vn[~c] = np.nan
-    vs[~c] = np.nan
-    v[~c] = np.nan
-    density[~c] = np.nan
 
     return psat, density, d, v
