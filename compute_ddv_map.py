@@ -164,7 +164,6 @@ if __name__ == "__main__":
     instrument = "Test exposure"
     fname = "yaml/reference.yaml"
 
-    
     # Intialize map
     nx, ny = 181, 181
     w, rx, ry, az, el = initialize_azel_map(nx, ny)
