@@ -3,10 +3,10 @@ import numpy as np
 from satconsim.constants import rearth, wearth, flat, rau, rsun, r2d, d2r, mu
 
 def observer_posvel(lat, elev):
-    sl, cl, tl = np.sin(lat * d2r), np.cos(lat * d2r), np.tan(lat * d2r)
-    u = np.arctan((1 - flat) * tl)
-    gs = (1 - flat) * np.sin(u) + elev / (1000 * rearth) * sl
-    gc = np.cos(u) + elev / (1000 * rearth) * cl
+    slat, clat, tlat = np.sin(lat * d2r), np.cos(lat * d2r), np.tan(lat * d2r)
+    u = np.arctan((1 - flat) * tlat)
+    gs = (1 - flat) * np.sin(u) + elev / (1000 * rearth) * slat
+    gc = np.cos(u) + elev / (1000 * rearth) * clat
     pos = rearth * np.array([gc, 0.0, gs])
     vel = rearth * wearth * np.array([0.0, gc, 0.0])
 
@@ -117,15 +117,15 @@ def solar_illumination(psat, sunha, sundec, sunr):
     
     return illuminated
 
-def solar_azel(sunha, sundec, lat):
-    sh, ch = np.sin(sunha * d2r), np.cos(sunha * d2r)
-    sd, cd, td = np.sin(sundec * d2r), np.cos(sundec * d2r), np.tan(sundec * d2r)
+def azel(ha, dec, lat):
+    sh, ch = np.sin(ha * d2r), np.cos(ha * d2r)
+    sd, cd, td = np.sin(dec * d2r), np.cos(dec * d2r), np.tan(dec * d2r)
     sl, cl = np.sin(lat * d2r), np.cos(lat * d2r)
 
-    sunaz = np.mod(np.arctan2(sh, ch * sl - td * cl) * r2d + 180, 360)
-    sunel = np.arcsin(sl * sd + cl * cd * ch) * r2d
+    az = np.mod(np.arctan2(sh, ch * sl - td * cl) * r2d + 180, 360)
+    el = np.arcsin(sl * sd + cl * cd * ch) * r2d
 
-    return sunaz, sunel
+    return az, el
 
 def solar_radec(mjd):
     t = (mjd - 51544.5) / 36525.0

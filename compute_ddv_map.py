@@ -1,10 +1,14 @@
 #!/usr/bin/env python3
+import os
+import sys
 import yaml
 import tqdm
+import argparse
+import warnings
+
 import numpy as np
 import matplotlib.pyplot as plt
 from astropy.wcs import wcs
-import warnings
 
 from satconsim.constants import d2r, r2d, rearth
 from satconsim.ddvmap import compute_ddv_map, initialize_azel_map
@@ -16,69 +20,49 @@ if __name__ == "__main__":
     warnings.filterwarnings("ignore", category=RuntimeWarning, append=True)
     warnings.filterwarnings("ignore", category=UserWarning, append=True)
 
-    # Settings
-    lat = -30.244639 # Observer latitude [deg]
-    elev = 2663 # Observer elevation [m]
-    sundec = -0.0
-    sunha = 125.3
-    afov = 100 # Field-of-view [deg^2]
-    texp = 60 # Exposure time [sec]
-    fname = "yaml/starlink_gen2_oneweb_phase2.yaml"
+    # Read commandline options
+    parser = argparse.ArgumentParser(description="Create allsky maps with expected counts")
+    parser.add_argument("-c", "--config", help="Observation configuration [file, default: example_config.yaml]",
+                        metavar="FILE", default="example_config.yaml")
+    parser.add_argument("-C", "--constellation", help="Satellite constellation configuration [file, default: example_constellation.yaml]",
+                        metavar="FILE", default="example_constellation.yaml")
+    parser.add_argument("-H", "--hourangle", help="Solar hour angle [deg, default: 90.0]",
+                        type=float, default=90.0)
+    parser.add_argument("-d", "--declination", help="Solar declination [deg, default: 0.0]",
+                        type=float, default=0.0)
+    parser.add_argument("-o", "--output", help="Output file name [default: plot.png]", 
+                        metavar="FILE", default="plot.png")
+    args = parser.parse_args()
 
-    lat = -24.627222 # Observer latitude [deg]
-    elev = 2635 # Observer elevation [m]
-    sundec = -0.0
-    sunha = 90
-    afov = (6 / 60)**2 # Field-of-view [deg^2]
-    texp = 300 # Exposure time [sec]
-    instrument = "VLT/FORS2 Imaging"
-    fname = "yaml/starlink_gen2_oneweb_phase2.yaml"
+    # Check arguments
+    if not os.path.exists(args.config):
+        print("Observation configuration file not found.")
+        sys.exit()
+    if not os.path.exists(args.constellation):
+        print("Satellite constellation configuration file not found.")
+        sys.exit()
+    sunha = args.hourangle
+    sundec = args.declination
 
-    lat = -24.627222 # Observer latitude [deg]
-    elev = 2635 # Observer elevation [m]
-    sundec = -0.0
-    sunha = 90
-    afov = (6 / 60) * (2 / 3600) # Field-of-view [deg^2]
-    texp = 1800 # Exposure time [sec]
-    instrument = "VLT/FORS2 spectroscopy"
-    fname = "yaml/starlink_gen2_oneweb_phase2.yaml"
-
-    lat = -24.627222 # Observer latitude [deg]
-    elev = 2635 # Observer elevation [m]
-    sundec = -0.0
-    sunha = 90
-    afov = (10 / 3600) * (2 / 3600) # Field-of-view [deg^2]
-    texp = 1800 # Exposure time [sec]
-    instrument = "VLT/UVES spectroscopy"
-    fname = "yaml/starlink_gen2_oneweb_phase2.yaml"
-
-    lat = -24.627222 # Observer latitude [deg]
-    elev = 2635 # Observer elevation [m]
-    sundec = -0.0
-    sunha = 90
-    afov = 1 # Field-of-view [deg^2]
-    texp = 300 # Exposure time [sec]
-    instrument = "VST/OmegaCAM imaging"
-    fname = "yaml/starlink_gen2_oneweb_phase2.yaml"
-
-    # Settings
-    lat = -30.244639 # Observer latitude [deg]
-    elev = 2663 # Observer elevation [m]
-    sundec = -0.0
-    sunha = 100.0
-    afov = 3 * 3 # Field-of-view [deg^2]
-    texp = 300 # Exposure time [sec]
-    instrument = "Rubin Observatory/LSST"
-    fname = "yaml/starlink_gen2_oneweb_phase2.yaml"
+    # Read observation config
+    with open(args.config, "r") as fp:
+        conf = yaml.full_load(fp)
+    name = conf["name"]
+    lat = conf["latitude_deg"]
+    elev = conf["elevation_m"]
+    afov = conf["fov_deg_sq"]
+    texp = conf["texp_s"]
 
     # Intialize map
     nx, ny = 181, 181
     w, rx, ry, az, el = initialize_azel_map(nx, ny)
 
     # Read YAML file
-    with open(fname, "r") as fp:
-        orbital_shells = yaml.full_load(fp)
-
+    with open(args.constellation, "r") as fp:
+        constellation = yaml.full_load(fp)
+    # Extract orbital shells
+    orbital_shells = constellation["shells"]
+        
     # Number of orbital shells
     nshell = len(orbital_shells)
 
@@ -138,10 +122,10 @@ if __name__ == "__main__":
     ax1.text(nx, 0.85 * ny, f"$\delta_\odot={sundec:.2f}^\circ$", horizontalalignment="right")
     ax1.text(nx, 0.8 * ny, f"$A_\odot={sunel:.2f}^\circ$", horizontalalignment="right")
 
-    ax1.text(0.5 * nx, 1.05 * ny, "Starlink Generation 2 + OneWeb Phase 2", horizontalalignment="center")
-    ax1.text(0, 0.95 * ny, instrument)
+    ax1.text(0.5 * nx, 1.05 * ny, constellation["name"], horizontalalignment="center")
+    ax1.text(0, 0.95 * ny, name)
     ax1.text(0, 0.9 * ny, f"FOV = {afov:g} deg$^2$")
     ax1.text(0, 0.85 * ny, f"$t_\mathrm{{exp}} = {texp}$ s")
     plt.tight_layout()
-    plt.savefig("plot.png")
+    plt.savefig(args.output)
 
