@@ -15,7 +15,7 @@ Dependency requirements are handled using pip. You can install these requirement
 Note that _satconsim_ requires `python 3`. To create animated gifs, the `convert` tool from *Image-Magick* is also required.
 
 ## Tools & Usage
-* `nsat_allsky_anim.py`: Generates all sky maps with the number of satellites for a given constellation configuration and instrument configuration. It can generate a single plot (use `-n 1`) or, e.g. 20 plots at 5 minute intervals (`-n 20 -d 5`) at the provided start time (e.g. `-t 2020-07-14T18:00:00`). If the extention of the output is `gif`, the plots will be combined into an animated gif.
+* `nsat_allsky_anim.py`: Generates all sky maps with the number of satellites for a given constellation configuration and instrument configuration. It can generate a single plot (use `-n 1`) or, e.g. 20 plots at 5 minute intervals (`-n 20 -d 5`) at the provided start time (e.g. `-t 2020-07-14T18:00:00`). If the extention of the output is `gif`, the plots will be combined into an animated gif. The example plot above was created with `./nsat_allsky_anim.py -t 2020-06-20T23:00:00 -n 1 -o example_plot.png -c instruments/rubin_lsst.yaml -C constellations/starlink_gen2.yaml`.
 
 ## Satellite constellation configuration files
 The satellite configuration is described in `yaml` files, using the following formatting to specify the constellation name and provide the parameters of each orbital shell in the constellation.
