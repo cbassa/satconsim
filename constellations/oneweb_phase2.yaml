@@ -1,0 +1,20 @@
+name: "OneWeb Phase 2"
+shells:
+- name: "OneWeb Phase2_Shell_1"
+  id: "oneweb_phase2_shell_1"
+  altitude_km: 1200
+  inclination_deg: 87.9
+  number_of_planes: 36
+  satellites_per_plane: 49
+- name: "OneWeb Phase2_Shell_2"
+  id: "oneweb_phase2_shell_2"
+  altitude_km: 1200
+  inclination_deg: 40.0
+  number_of_planes: 32
+  satellites_per_plane: 720
+- name: "OneWeb Phase2_Shell_3"
+  id: "oneweb_phase2_shell_3"
+  altitude_km: 1200
+  inclination_deg: 55
+  number_of_planes: 32
+  satellites_per_plane: 720
