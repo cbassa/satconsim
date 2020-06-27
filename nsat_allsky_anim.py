@@ -26,9 +26,9 @@ if __name__ == "__main__":
 
     # Read commandline options
     parser = argparse.ArgumentParser(description="Create allsky maps with expected counts")
-    parser.add_argument("-c", "--config", help="Observation configuration [file, default: example_config.yaml]",
-                        metavar="FILE", default="example_config.yaml")
-    parser.add_argument("-C", "--constellation", help="Satellite constellation configuration [file, default: example_constellation.yaml]",
+    parser.add_argument("-c", "--config", help="Instrument configuration [file, default: example_config.yaml]",
+                        metavar="FILE", default="instruments/example_config.yaml")
+    parser.add_argument("-C", "--constellation", help="Satellite constellation configuration [file, default: constellations/example_constellation.yaml]",
                         metavar="FILE", default="example_constellation.yaml")
     parser.add_argument("-t", "--tstart", help="Start time [YYYY-MM-DDTHH:MM:SS, default: 2020-06-20T21:00:00]",
                         type=str, default="2020-06-20T21:00:00")
