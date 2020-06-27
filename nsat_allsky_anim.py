@@ -181,6 +181,10 @@ if __name__ == "__main__":
         ax1.text(0.5 * nx, -0.05 * ny, text, horizontalalignment="center")
         
         plt.tight_layout()
+
+        if not os.path.exists("results"):
+            os.makedirs("results")
+        
         plt.savefig(f"results/plot_{i:04d}.png")
 
     # Merge plots
