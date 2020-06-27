@@ -7,6 +7,8 @@ Using analytical descriptions of the location of a satellite within an orbital s
 
 ![Example all sky plot](https://raw.githubusercontent.com/cbassa/satconsim/master/examples/example_allsky_plot.png)
 
+This software is the result of a collaboration between Cees Bassa (ASTRON), David Galadi (Calar Alto Observatory) and Olivier Hainaut (ESO) while preparing for the [SATCON1 Workshop](https://aas.org/satellite-constellations-1-workshop).
+
 ## Installation
 Dependency requirements are handled using pip. You can install these requirements through
 
