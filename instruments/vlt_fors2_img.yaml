@@ -1,0 +1,7 @@
+name: "VLT/FORS2 Imaging"
+site: "Paranal"
+longitude_deg: -70.404167
+latitude_deg: -24.627222
+elevation_m: 2635
+fov_deg_sq: 0.01
+texp_s: 300

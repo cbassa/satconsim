@@ -1,0 +1,7 @@
+name: "Legacy Survey of Space and Time (LSST)"
+site: "Rubin Observatory"
+longitude_deg: -70.749417
+latitude_deg: -30.244639
+elevation_m: 2663
+fov_deg_sq: 9.6
+texp_s: 30
