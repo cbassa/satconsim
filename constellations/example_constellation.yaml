@@ -1,8 +1,0 @@
-name: "Reference Constellation (10k sats at 1000 km/53 deg)"
-shells:
-- name: "Reference Constellation (10k sats at 1000 km/53 deg)"
-  id: "reference"
-  altitude_km: 1000
-  inclination_deg: 53.0
-  number_of_planes: 100
-  satellites_per_plane: 100
