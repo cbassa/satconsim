@@ -36,8 +36,8 @@ if __name__ == "__main__":
                         type=float, default=5.0)
     parser.add_argument("-n", "--number", help="Number of steps [default: 180]", 
                         type=int, default=180)
-    parser.add_argument("-o", "--output", help="Output file name, use gif extention for movie [default: plot.png]", 
-                        metavar="FILE", default="plot.png")
+    parser.add_argument("-o", "--output", help="Output file name, use gif extention for movie, png for single plots [default: plot.gif]", 
+                        metavar="FILE", default="plot.gif")
     args = parser.parse_args()
 
     # Check arguments
