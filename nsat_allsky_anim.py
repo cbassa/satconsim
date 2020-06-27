@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import os
 import sys
+import glob
 import yaml
 import tqdm
 import argparse
@@ -35,8 +36,8 @@ if __name__ == "__main__":
                         type=float, default=5.0)
     parser.add_argument("-n", "--number", help="Number of steps [default: 180]", 
                         type=int, default=180)
-    parser.add_argument("-o", "--output", help="Output file name [default: plot.png]", 
-                        metavar="FILE", default="plot.gif")
+    parser.add_argument("-o", "--output", help="Output file name, use gif extention for movie [default: plot.png]", 
+                        metavar="FILE", default="plot.png")
     args = parser.parse_args()
 
     # Check arguments
@@ -46,7 +47,7 @@ if __name__ == "__main__":
     if not os.path.exists(args.constellation):
         print("Satellite constellation configuration file not found.")
         sys.exit()
-
+        
     # Read observation config
     with open(args.config, "r") as fp:
         conf = yaml.full_load(fp)
@@ -57,6 +58,16 @@ if __name__ == "__main__":
     elev = conf["elevation_m"]
     afov = conf["fov_deg_sq"]
     texp = conf["texp_s"]
+
+    # Create results directory if absent
+    if not os.path.exists("results"):
+        os.makedirs("results")
+
+    # Remove any remaining plots
+    try:
+        os.system("rm results/plot_????.png")
+    except:
+        pass
 
     # Intialize map
     nx, ny = 181, 181
@@ -181,12 +192,12 @@ if __name__ == "__main__":
         ax1.text(0.5 * nx, -0.05 * ny, text, horizontalalignment="center")
         
         plt.tight_layout()
-
-        if not os.path.exists("results"):
-            os.makedirs("results")
-        
-        plt.savefig(f"results/plot_{i:04d}.png")
+        if args.output[-3:] == "gif":
+            plt.savefig(f"results/plot_{i:04d}.png")
+        else:
+            plt.savefig(args.output)
 
     # Merge plots
-    cmd = f"convert results/plot_????.png {args.output}"
-    os.system(cmd)
+    if args.output[-3:] == "gif":
+        cmd = f"convert results/plot_????.png {args.output}"
+        os.system(cmd)
