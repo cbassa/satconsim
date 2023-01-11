@@ -21,8 +21,7 @@ def plot_map(fig, ax, w, rx, ry, v, vmin, vmax, cmap, label, normtype="linear"):
         c = (vlevels > vmin) & (vlevels < vmax)
 
         img = ax.imshow(v, origin="lower", interpolation=None, aspect=1,
-                        cmap=cmap, vmin=vmin, vmax=vmax,
-                        norm=norm)
+                        cmap=cmap, norm=norm)
         ax_divider = make_axes_locatable(ax)
         cax = ax_divider.append_axes("bottom", size="5%", pad="8%")
         cbar = fig.colorbar(img, cax=cax, orientation="horizontal", label=label, ticks=vlevels, norm=norm)
