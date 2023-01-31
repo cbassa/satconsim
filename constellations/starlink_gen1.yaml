@@ -1,0 +1,33 @@
+name: "Starlink Generation 1"
+shells:
+- name: "Starlink Gen1 Shell 1"
+  id: "starlink_gen1_shell_1"
+  altitude_km: 550
+  inclination_deg: 53.0
+  number_of_planes: 72
+  satellites_per_plane: 22
+- name: "Starlink Gen1 Shell 2"
+  id: "starlink_gen1_shell_2"
+  altitude_km: 570
+  inclination_deg: 70.0
+  number_of_planes: 36
+  satellites_per_plane: 20
+- name: "Starlink Gen1 Shell 3"
+  id: "starlink_gen1_shell_3"
+  altitude_km: 560
+  inclination_deg: 97.6
+  number_of_planes: 6
+  satellites_per_plane: 58
+- name: "Starlink Gen1 Shell 4"
+  id: "starlink_gen1_shell_4"
+  altitude_km: 540
+  inclination_deg: 53.2
+  number_of_planes: 72
+  satellites_per_plane: 22
+- name: "Starlink Gen1 Shell 5"
+  id: "starlink_gen1_shell_5"
+  altitude_km: 560
+  inclination_deg: 97.6
+  number_of_planes: 4
+  satellites_per_plane: 43
+

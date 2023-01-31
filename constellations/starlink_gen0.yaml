@@ -1,3 +1,5 @@
+name: "Starlink Generation 0"
+shells:
 - name: "Starlink Gen0 Shell 1"
   id: "starlink_gen0_shell_1"
   altitude_km: 550
