@@ -108,10 +108,10 @@ if __name__ == "__main__":
         
         # Compute number of satellites within the exposure for this shell
         nsatshell[i] = density * afov + 2 * density * rfov * v * texp 
+        nsatshell[i] = np.nan_to_num(nsatshell[i], nan = 0, neginf = 0, posinf = 0)
 
         # Reset nan/infs to zero to allow summing
-        c = np.isfinite(nsattot)
-        nsattot[~c] = 0
+        nsattot = np.nan_to_num(nsattot, nan = 0, neginf = 0, posinf = 0)
         nsattot += nsatshell[i]
 
     # Reset points below horizon and zeroed
